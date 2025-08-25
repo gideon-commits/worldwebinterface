@@ -282,7 +282,7 @@ def admin_login_page():
     """
 
 @app.post("/admin/login")
-def admin_login(request: Request, username: str = Form(...), password: str = Form(...)):
+def admin_login_post(request: Request, username: str = Form(...), password: str = Form(...)):
     """Process admin login"""
     if verify_admin_credentials(username, password):
         request.session["admin_authenticated"] = True

@@ -1,7 +1,8 @@
-fastapi>=0.104.1
-uvicorn[standard]>=0.24.0
-pydantic>=2.5.0
-python-multipart>=0.0.6
-slowapi>=0.1.9
-python-dotenv>=1.0.0
-itsdangerous>=2.2.0
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+pydantic==2.5.0
+python-multipart==0.0.6
+slowapi==0.1.9
+python-dotenv==1.0.0
+itsdangerous==2.2.0
+starlette==0.27.0

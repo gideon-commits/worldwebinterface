@@ -1,9 +1,9 @@
-from fastapi import FastAPI, HTTPException, Request, Depends, Form
-from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi import FastAPI, HTTPException, Depends, Form
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
-import secrets
-from starlette.middleware.sessions import SessionMiddleware
+from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.middleware.cors import CORSMiddleware
+from starlette.middleware.sessions import SessionMiddleware
+from starlette.requests import Request
 from pydantic import BaseModel
 import sqlite3
 from datetime import datetime
@@ -178,7 +178,7 @@ def signup(request: SignupRequest, http_request: Request):
             raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
 
 @app.get("/waitlist")
-def get_waitlist(request: Request, authenticated: bool = Depends(verify_admin_session)):
+def get_waitlist(authenticated: bool = Depends(verify_admin_session)):
     """Get all waitlist entries (for admin use)"""
     with get_db_connection() as conn:
         cursor = conn.cursor()

@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react'
 function App() {
   const [email, setEmail] = useState('')
   const [website, setWebsite] = useState('')
-  const [totalSignups, setTotalSignups] = useState(847)
+  const [totalSignups, setTotalSignups] = useState(0)
   const [isLoading, setIsLoading] = useState(false)
   const [message, setMessage] = useState('')
   const [isSuccess, setIsSuccess] = useState(false)
@@ -22,10 +22,10 @@ function App() {
     try {
       const response = await fetch(`${API_BASE}/stats`)
       const data = await response.json()
-      setTotalSignups(data.total_signups || 847)
+      setTotalSignups(data.total_signups || 0)
     } catch (error) {
       console.error('Error fetching stats:', error)
-      setTotalSignups(847) // Fallback to demo number
+      setTotalSignups(0) // Start with 0 if API fails
     }
   }
 

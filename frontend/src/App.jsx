@@ -10,7 +10,7 @@ function App() {
   const [showForm, setShowForm] = useState(false)
 
   const API_BASE = process.env.NODE_ENV === 'production' 
-    ? 'https://waitlist-backend.onrender.com' 
+    ? 'https://api.worldwebinterface.com' 
     : 'http://0.0.0.0:8000'
 
   // Fetch current signup count on component mount

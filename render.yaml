@@ -17,6 +17,6 @@ services:
       - key: ADMIN_USERNAME
         value: trufflesoriginal
       - key: ADMIN_PASSWORD
-        generateValue: true
+        value: trufflesoriginal
       - key: NODE_ENV
         value: production

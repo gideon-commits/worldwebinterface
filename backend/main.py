@@ -479,5 +479,5 @@ def serve_react_app(full_path: str):
 if __name__ == "__main__":
     import uvicorn
     host = os.getenv("API_HOST", "0.0.0.0")
-    port = int(os.getenv("API_PORT", "8000"))
+    port = int(os.getenv("PORT", os.getenv("API_PORT", "8000")))
     uvicorn.run(app, host=host, port=port)

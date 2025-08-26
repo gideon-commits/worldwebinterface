@@ -3,7 +3,7 @@ services:
   - type: web
     name: waitlist-app
     env: python
-    buildCommand: "cd frontend && npm install && npm run build && cd ../backend && pip install -r requirements.txt"
+    buildCommand: "cd frontend && npm install && npm run build && cd ../backend && pip install --upgrade pip && pip install --no-cache-dir -r requirements.txt"
     startCommand: "cd backend && python main.py"
     envVars:
       - key: DATABASE_PATH

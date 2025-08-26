@@ -20,7 +20,7 @@ function App() {
 
   const fetchStats = async () => {
     try {
-      const response = await fetch(`${API_BASE}/stats`)
+      const response = await fetch(`${API_BASE}/api/stats`)
       const data = await response.json()
       setTotalSignups(data.total_signups || 0)
     } catch (error) {
@@ -50,7 +50,7 @@ function App() {
     }
 
     try {
-      const response = await fetch(`${API_BASE}/signup`, {
+      const response = await fetch(`${API_BASE}/api/signup`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

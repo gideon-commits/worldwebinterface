@@ -11,6 +11,7 @@ from datetime import datetime
 import os
 from contextlib import contextmanager
 import logging
+import secrets
 from dotenv import load_dotenv
 
 # Load environment variables
@@ -156,7 +157,7 @@ def signup(signup_data: SignupRequest, request: Request):
             # Insert new signup
             cursor.execute(
                 "INSERT INTO waitlist (email, website) VALUES (?, ?)",
-                (email, request.website.strip()[:500])  # Limit website URL length
+                (email, signup_data.website.strip()[:500])  # Limit website URL length
             )
             conn.commit()
             

@@ -1,7 +1,8 @@
 from fastapi import FastAPI, HTTPException, Depends, Form
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
-from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.responses import HTMLResponse, RedirectResponse, FileResponse
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from starlette.middleware.sessions import SessionMiddleware
 from starlette.requests import Request
 from pydantic import BaseModel
@@ -30,6 +31,10 @@ limiter = Limiter(key_func=get_remote_address)
 app = FastAPI(title="Content Union Waitlist API")
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
+# Mount static files (frontend build) - only if not API routes
+if os.path.exists("../frontend/dist"):
+    app.mount("/assets", StaticFiles(directory="../frontend/dist/assets"), name="assets")
 
 # Add session middleware
 app.add_middleware(SessionMiddleware, secret_key="your-secret-key-change-in-production")
@@ -103,13 +108,19 @@ class SignupResponse(BaseModel):
     message: str
     total_signups: int
 
-@app.get("/")
-@limiter.limit("10/minute")
-def read_root(request: Request):
-    logger.info("Health check endpoint accessed")
+@app.get("/api")
+def read_root():
+    """Health check endpoint"""
     return {"message": "Content Union Waitlist API", "status": "running"}
 
-@app.get("/stats")
+@app.get("/")
+def serve_frontend():
+    """Serve the React frontend"""
+    if os.path.exists("../frontend/dist/index.html"):
+        return FileResponse("../frontend/dist/index.html")
+    return {"message": "Frontend not built. Run 'npm run build' first."}
+
+@app.get("/api/stats")
 @limiter.limit("30/minute")
 def get_stats(request: Request):
     """Get current signup statistics"""
@@ -124,12 +135,12 @@ def get_stats(request: Request):
             logger.error(f"Database error in get_stats: {str(e)}")
             raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
 
-@app.post("/signup", response_model=SignupResponse)
+@app.post("/api/signup")
 @limiter.limit("5/minute")
-def signup(request: SignupRequest, http_request: Request):
+def signup(signup_data: SignupRequest, request: Request):
     """Add email to waitlist"""
     # Validate email format
-    email = request.email.lower().strip()
+    email = signup_data.email.lower().strip()
     if not email or '@' not in email or len(email) > 254:
         logger.warning(f"Invalid email format attempted: {email[:20]}...")
         raise HTTPException(status_code=400, detail="Invalid email format")
@@ -177,7 +188,7 @@ def signup(request: SignupRequest, http_request: Request):
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
 
-@app.get("/waitlist")
+@app.get("/api/waitlist")
 def get_waitlist(authenticated: bool = Depends(verify_admin_session)):
     """Get all waitlist entries (for admin use)"""
     with get_db_connection() as conn:

@@ -1,95 +1,88 @@
-# Content Licensing Waitlist App
+# Content Union Waitlist App
 
-A simple, powerful waitlist web app to unite websites in pushing AI companies to adopt content licensing APIs instead of free crawling.
+A modern waitlist application for the Content Union movement - uniting websites to demand fair compensation for AI training data.
 
-## 🎯 Purpose
+## Features
 
-Campaign for websites to "unionize" and push AI companies to adopt a content licensing API instead of free crawling.
+- **Single Deployment** - Frontend and backend served together
+- **Modern React Frontend** with Tailwind CSS
+- **FastAPI Backend** with SQLite database
+- **Real-time signup counter** showing movement growth
+- **Email validation** and duplicate prevention
+- **Rate limiting** to prevent abuse
+- **Admin panel** for managing signups
+- **Mobile-responsive** design
+- **Docker support** for easy deployment
 
-**Headline:** "Own Your Content. Get Paid When AI Trains On It."
+## Tech Stack
 
-## 🛠 Features
+- **Frontend**: React 18 + Vite + Tailwind CSS
+- **Backend**: FastAPI + SQLite + Uvicorn
+- **Database**: SQLite with automatic initialization
+- **Deployment**: Single service deployment (Docker, Render, or standalone)
 
-- **Bold Landing Page**: Compelling headline and mission statement
-- **Real-time Counter**: Shows "X websites have joined the movement"
-- **Email Signup**: Simple waitlist form with email + optional website
-- **SQLite Backend**: Lightweight database storage
-- **Modern Design**: Clean, mobile-friendly interface with gradient background
-- **API Integration**: FastAPI backend with CORS support
+## Quick Start
 
-## 🚀 Quick Start
+### Combined Deployment (Recommended)
 
-### Backend (FastAPI + SQLite)
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd waitlist-app
+   ```
+
+2. **Build and run everything**
+   ```bash
+   ./build.sh
+   cd backend && python main.py
+   ```
+   
+   Access the full app at http://localhost:8000
+
+### Docker Deployment
 
 ```bash
-cd backend
-source ../../venv/bin/activate  # or create new venv
-pip install -r requirements.txt
-python main.py
+docker-compose up --build
 ```
 
-Backend runs on: http://localhost:8000
+Access the app at http://localhost:8000
 
-### Frontend (React + TailwindCSS)
+### Development Mode (Separate Services)
 
-```bash
-cd frontend
-npm install
-npm run dev
-```
+1. **Start Backend**
+   ```bash
+   cd backend
+   pip install -r requirements.txt
+   python main.py
+   ```
 
-Frontend runs on: http://localhost:5173
+2. **Start Frontend** (in new terminal)
+   ```bash
+   cd frontend
+   npm install
+   npm run dev
+   ```
 
-## 📡 API Endpoints
+## API Endpoints
 
-- **GET** `/` - API status
-- **GET** `/stats` - Get current signup count
-- **POST** `/signup` - Add email to waitlist
-  ```json
-  {
-    "email": "user@example.com",
-    "website": "https://example.com"
-  }
-  ```
-- **GET** `/waitlist` - View all entries (admin)
+- `GET /` - Serve React frontend
+- `GET /api/stats` - Get current signup count
+- `POST /api/signup` - Add email to waitlist
+- `GET /api/waitlist` - Get all entries (admin only)
+- `GET /admin` - Admin panel
 
-## 🗄 Database Schema
+## Environment Variables
 
-SQLite table: `waitlist`
-- `id` - Auto-increment primary key
-- `email` - Unique email address
-- `website` - Optional website URL
-- `created_at` - Timestamp
+Create `.env` file in backend directory:
 
-## 🎨 Design Features
-
-- **Gradient Background**: Blue to purple gradient
-- **Glassmorphism**: Semi-transparent counter with backdrop blur
-- **Responsive**: Mobile-first design with Tailwind CSS
-- **Interactive**: Hover effects and loading states
-- **Accessible**: High contrast colors and proper form labels
-
-## 🚀 Deployment Options
-
-### Option 1: Vercel (Frontend) + Railway (Backend)
-
-**Frontend (Vercel):**
-1. Push frontend to GitHub
-2. Connect to Vercel
-3. Update API_BASE URL to production backend
-
-**Backend (Railway):**
-1. Push backend to GitHub
-2. Connect to Railway
-3. Add environment variables if needed
-
-### Option 2: Single Server (DigitalOcean/AWS)
-
-1. Install Node.js and Python
-2. Build React app: `npm run build`
-3. Serve with nginx
-4. Run FastAPI with gunicorn: `gunicorn main:app -w 4 -k uvicorn.workers.UvicornWorker`
-
+```env
+DATABASE_PATH=waitlist.db
+CORS_ORIGINS=*
+API_HOST=0.0.0.0
+API_PORT=8000
+ADMIN_USERNAME=admin
+ADMIN_PASSWORD=changeme123
+NODE_ENV=production
 ### Option 3: Docker
 
 ```dockerfile

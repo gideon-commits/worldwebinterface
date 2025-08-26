@@ -1,15 +1,15 @@
 services:
-  # Backend API
+  # Combined Frontend + Backend
   - type: web
-    name: waitlist-backend
+    name: waitlist-app
     env: python
-    buildCommand: "pip install -r requirements.txt"
-    startCommand: "python main.py"
+    buildCommand: "cd frontend && npm install && npm run build && cd ../backend && pip install -r requirements.txt"
+    startCommand: "cd backend && python main.py"
     envVars:
       - key: DATABASE_PATH
         value: /opt/render/project/src/waitlist.db
       - key: CORS_ORIGINS
-        value: https://waitlist-frontend.onrender.com
+        value: "*"
       - key: API_HOST
         value: 0.0.0.0
       - key: API_PORT
@@ -18,13 +18,5 @@ services:
         value: trufflesoriginal
       - key: ADMIN_PASSWORD
         generateValue: true
-    
-  # Frontend
-  - type: web
-    name: waitlist-frontend
-    env: node
-    buildCommand: "npm install && npm run build"
-    startCommand: "npm run preview -- --host 0.0.0.0 --port $PORT"
-    envVars:
       - key: NODE_ENV
         value: production

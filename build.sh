@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Build script for unified deployment
+# Build script for the waitlist app
 echo "Building frontend..."
 cd frontend
 npm install
@@ -12,4 +12,4 @@ cd backend
 pip install -r requirements.txt
 cd ..
 
-echo "Build complete!"
+echo "Build complete! Run 'cd backend && python main.py' to start the combined app."

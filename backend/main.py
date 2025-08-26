@@ -33,9 +33,10 @@ app = FastAPI(title="Content Union Waitlist API")
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
-# Mount static files (frontend build) - only if not API routes
+# Mount static files (frontend build)
 if os.path.exists("../frontend/dist"):
     app.mount("/assets", StaticFiles(directory="../frontend/dist/assets"), name="assets")
+    app.mount("/static", StaticFiles(directory="../frontend/dist"), name="static")
 
 # Add session middleware
 app.add_middleware(SessionMiddleware, secret_key="your-secret-key-change-in-production")
@@ -120,6 +121,7 @@ def serve_frontend():
     if os.path.exists("../frontend/dist/index.html"):
         return FileResponse("../frontend/dist/index.html")
     return {"message": "Frontend not built. Run 'npm run build' first."}
+
 
 @app.get("/api/stats")
 @limiter.limit("30/minute")
@@ -460,6 +462,19 @@ def admin_dashboard(request: Request, authenticated: bool = Depends(verify_admin
             
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
+
+# Catch-all route to serve React app for client-side routing (must be last)
+@app.get("/{full_path:path}")
+def serve_react_app(full_path: str):
+    """Serve React app for all non-API routes"""
+    # Serve static files directly
+    if full_path.startswith("assets/"):
+        return FileResponse(f"../frontend/dist/{full_path}")
+    
+    # For all other routes, serve the React app
+    if os.path.exists("../frontend/dist/index.html"):
+        return FileResponse("../frontend/dist/index.html")
+    return {"message": "Frontend not built. Run 'npm run build' first."}
 
 if __name__ == "__main__":
     import uvicorn
